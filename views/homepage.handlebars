@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- ... Head content ... -->
+</head>
+
+<body>
+  <header>
+    <h1>Tech Blog</h1>
+    {{#if user}}
+      <a href="/dashboard">Dashboard</a>
+      <a href="/logout">Logout</a>
+    {{else}}
+      <a href="/login">Login</a>
+      <a href="/signup">Sign Up</a>
+    {{/if}}
+  </header>
+  <main>
+    {{#if user}}
+      <h2>Welcome, {{user.username}}!</h2>
+      <a href="/new-post">Create A New Post</a>
+    {{else}}
+      <h2>Welcome to Tech Blog!</h2>
+    {{/if}}
+
+    {{#if posts.length}}
+      {{#each posts}}
+        <article>
+          <h3>{{this.title}}</h3>
+          <p>Created by: {{this.User.username}}</p>
+          <p>Created at: {{this.createdAt}}</p>
+          <p>{{this.content}}</p>
+          <hr>
+          <h3>Comments</h3>
+          {{#if this.Comments.length}}
+            <ul>
+              {{#each this.Comments}}
+                <li>
+                  <p>{{this.comment_text}}</p>
+                  <p>Comment by: {{this.User.username}}</p>
+                  <p>Commented at: {{this.createdAt}}</p>
+                </li>
+              {{/each}}
+            </ul>
+          {{else}}
+            <p>No comments yet.</p>
+          {{/if}}
+
+    {{#if user}}
+      <h3>Add a Comment</h3>
+      <form action="/post/{{this.id}}/comment" method="post">
+        <label for="comment_text">Comment:</label>
+        <textarea id="comment_text" name="comment_text" required></textarea>
+        <button type="submit">Submit</button>
+      </form>
+    {{else}}
+      <p>Please log in to leave a comment.</p>
+    {{/if}}
+  </article>
+{{/each}}
+    {{else}}
+      <p>No posts to display.</p>
+    {{/if}}
+  </main>
+</body>
+
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- ... Head content ... -->
+</head>
+
+<body>
+  <header>
+    <!-- ... Header content ... -->
+    {{#if user}}
+      <!-- Only render these links if the user is not logged in -->
+    {{else}}
+      <a href="/login">Login</a>
+      <a href="/signup">Sign Up</a>
+    {{/if}}
+  </header>
+  <main>
+    {{#if user}}
+      <h2>Welcome to the Dashboard, {{user.username}}!</h2>
+    {{else}}
+      <p>Please log in to access the dashboard.</p>
+    {{/if}}
+
+    {{#if logged_in}}
+      <a href="/new-post">Create A New Post</a>
+      <a href="/logout">Logout</a>
+    {{else}}
+      <p>Please log in to create a new post.</p>
+    {{/if}}
+
+    <!-- Display user's posts -->
+    {{#if posts.length}}
+      <h3>Your Posts:</h3>
+      <ul>
+        {{#each posts}}
+          <li>
+            <h4>{{this.title}}</h4>
+            <p>{{this.content}}</p>
+          </li>
+        {{/each}}
+      </ul>
+    {{else}}
+      <p>You have no posts yet.</p>
+    {{/if}}
+  </main>
+</body>
+
+</html>

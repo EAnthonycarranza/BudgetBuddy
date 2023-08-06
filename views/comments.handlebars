@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- ... Head content ... -->
+</head>
+
+<body>
+  <header>
+    <h1>Tech Blog</h1>
+    {{#if user}}
+      <a href="/dashboard">Dashboard</a>
+      <a href="/logout">Logout</a>
+    {{else}}
+      <a href="/login">Login</a>
+      <a href="/signup">Sign Up</a>
+    {{/if}}
+  </header>
+  <main>
+    <article>
+      <h3>{{post.title}}</h3>
+      <p>Created by: {{post.User.username}}</p>
+      <p>Created at: {{post.createdAt}}</p>
+      <p>{{post.content}}</p>
+      <hr>
+      <h3>Comments</h3>
+      {{#if post.Comments.length}}
+        <ul>
+          {{#each post.Comments}}
+            <li>
+              <p>{{this.comment_text}}</p>
+              <p>Comment by: {{this.User.username}}</p>
+              <p>Commented at: {{this.createdAt}}</p>
+            </li>
+          {{/each}}
+        </ul>
+      {{else}}
+        <p>No comments yet.</p>
+      {{/if}}
+
+      {{#if logged_in}}
+        <h3>Add a Comment</h3>
+        <form id="comment-form">
+          <label for="comment_text">Comment:</label>
+          <textarea id="comment_text" name="comment_text" required></textarea>
+          <button type="submit">Submit</button>
+        </form>
+      {{else}}
+        <p>Please log in to leave a comment.</p>
+      {{/if}}
+    </article>
+  </main>
+
+<script>
+  // JavaScript code to handle the comment form submission
+  const commentForm = document.getElementById("comment-form");
+  const commentInput = document.getElementById("comment_text");
+  const commentsList = document.querySelector("ul");
+
+  // Function to handle the comment form submission
+  async function submitComment(event) {
+      event.preventDefault();
+
+      const commentText = commentInput.value;
+
+      try {
+        // Send a POST request to the server to create a new comment
+        const response = await fetch(`/post/{{post.id}}/comment`, {
+          method: "POST",
+          body: JSON.stringify({ comment_text: commentText }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (response.ok) {
+          // If the comment is created successfully, update the comments list
+          const newComment = await response.json();
+          const commentItem = document.createElement("li");
+          commentItem.innerHTML = `
+            <p>${newComment.comment_text}</p>
+            <p>Comment by: ${newComment.User.username}</p>
+            <p>Commented at: ${newComment.createdAt}</p>
+          `;
+          commentsList.appendChild(commentItem);
+
+          // Clear the comment input field after submitting
+          commentInput.value = "";
+        } else {
+          // Handle error response
+          console.error("Failed to create comment.");
+        }
+      } catch (error) {
+        console.error("Error occurred while creating comment:", error);
+      }
+    }
+
+  // Add event listener to the comment form
+  commentForm.addEventListener("submit", submitComment);
+</script>
+</body>
+
+</html>
